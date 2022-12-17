@@ -16,4 +16,8 @@ class ParticleManage extends ChangeNotifier {
    particleList.add(particle);
    notifyListeners();
  }
+
+ void update(){
+    notifyListeners();
+ }
 }

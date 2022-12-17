@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:particle_album/particle/particle.dart';
 import 'package:particle_album/particle/particle_manage.dart';
+import 'package:image/image.dart' as image;
 
 ///  Name: ParticlePage
 ///  Created by Fitem on 2022/12/17
@@ -12,11 +14,21 @@ class ParticlePage extends StatefulWidget {
 }
 
 class ParticlePageState extends State<ParticlePage> {
-  final ParticleManage _manage = ParticleManage();
+  final ParticleManage particleManage = ParticleManage();
+  image.Image? imagePic;
 
   @override
   void initState() {
     super.initState();
+    initImage();
+  }
+
+  Future<void> initImage() async {
+    ByteData data = await rootBundle.load("assets/images/hanzi.png");
+    List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    imagePic = image.decodeImage(bytes)!;
+    imageToParticle();
+    particleManage.update();
   }
 
   @override
@@ -32,17 +44,17 @@ class ParticlePageState extends State<ParticlePage> {
 
   Widget _buildBody() {
     return CustomPaint(
-      painter: ParticlePainter(manage: _manage),
+      painter: ParticlePainter(manage: particleManage),
     );
   }
 
   void initParticleManage() {
-    _manage.particleList.clear();
+    particleManage.particleList.clear();
     // _manage.addParticle(Particle(x: 200, y: 250, size: 25, color: Colors.red));
     double size = 4;
     for (int i = 0; i < 50; i++) {
       for (int j = 0; j < 50; j++) {
-        _manage.addParticle(Particle(
+        particleManage.addParticle(Particle(
           x: size + 2 * size * j,
           y: size + 2 * size * i,
           size: size,
@@ -51,7 +63,9 @@ class ParticlePageState extends State<ParticlePage> {
     }
 
     // 回形图形
-    toPaperClip();
+    // toPaperClip();
+    // 图片转换成粒子
+    imageToParticle();
   }
 
   /// 回形图形
@@ -61,23 +75,41 @@ class ParticlePageState extends State<ParticlePage> {
       for (int j = 0; j < 50; j++) {
         if (((i == 24 - scales[0] * 5 || i == 24 + scales[0] * 5) && j >= 24 - scales[0] * 5 && j <= 24 + scales[0] * 5) ||
             ((j == 24 - scales[0] * 5 || j == 24 + scales[0] * 5) && i >= 24 - scales[0] * 5 && i <= 24 + scales[0] * 5)) {
-          _manage.particleList[i * 50 + j].color = Colors.blue;
+          particleManage.particleList[i * 50 + j].color = Colors.blue;
         }
         if (((i == 24 - scales[1] * 5 || i == 24 + scales[1] * 5) && j >= 24 - scales[1] * 5 && j <= 24 + scales[1] * 5) ||
             ((j == 24 - scales[1] * 5 || j == 24 + scales[1] * 5) && i >= 24 - scales[1] * 5 && i <= 24 + scales[1] * 5)) {
-          _manage.particleList[i * 50 + j].color = Colors.blue;
+          particleManage.particleList[i * 50 + j].color = Colors.blue;
         }
         if (((i == 24 - scales[2] * 5 || i == 24 + scales[2] * 5) && j >= 24 - scales[2] * 5 && j <= 24 + scales[2] * 5) ||
             ((j == 24 - scales[2] * 5 || j == 24 + scales[2] * 5) && i >= 24 - scales[2] * 5 && i <= 24 + scales[2] * 5)) {
-          _manage.particleList[i * 50 + j].color = Colors.blue;
+          particleManage.particleList[i * 50 + j].color = Colors.blue;
         }
         if (((i == 24 - scales[3] * 5 || i == 24 + scales[3] * 5) && j >= 24 - scales[3] * 5 && j <= 24 + scales[3] * 5) ||
             ((j == 24 - scales[3] * 5 || j == 24 + scales[3] * 5) && i >= 24 - scales[3] * 5 && i <= 24 + scales[3] * 5)) {
-          _manage.particleList[i * 50 + j].color = Colors.blue;
+          particleManage.particleList[i * 50 + j].color = Colors.blue;
         }
         if (((i == 24 - scales[4] * 5 || i == 24 + scales[4] * 5) && j >= 24 - scales[4] * 5 && j <= 24 + scales[4] * 5) ||
             ((j == 24 - scales[4] * 5 || j == 24 + scales[4] * 5) && i >= 24 - scales[4] * 5 && i <= 24 + scales[4] * 5)) {
-          _manage.particleList[i * 50 + j].color = Colors.blue;
+          particleManage.particleList[i * 50 + j].color = Colors.blue;
+        }
+      }
+    }
+  }
+
+  /// 图片转换粒子
+  void imageToParticle(){
+    if(imagePic == null) return;
+    int width = imagePic!.width;
+    int height = imagePic!.height;
+    for(int i = 0; i < 50; i++) {
+      for(int j = 0; j < 50; j++) {
+        // image库获取的x、y和Flutter相反，需要把j做为x轴
+        int x = width * j ~/ 50;
+        int y = height * i ~/ 50;
+        var pixel = imagePic!.getPixel(x, y);
+        if(pixel != Colors.white.value) {
+          particleManage.particleList[i * 50 + j].color = Colors.blue;
         }
       }
     }
