@@ -51,9 +51,9 @@ class ParticlePageState extends State<ParticlePage> {
   void initParticleManage() {
     particleManage.particleList.clear();
     // _manage.addParticle(Particle(x: 200, y: 250, size: 25, color: Colors.red));
-    double size = 4;
-    for (int i = 0; i < 50; i++) {
-      for (int j = 0; j < 50; j++) {
+    double size = 1;
+    for (int i = 0; i < 200; i++) {
+      for (int j = 0; j < 200; j++) {
         particleManage.addParticle(Particle(
           x: size + 2 * size * j,
           y: size + 2 * size * i,
@@ -102,14 +102,14 @@ class ParticlePageState extends State<ParticlePage> {
     if(imagePic == null) return;
     int width = imagePic!.width;
     int height = imagePic!.height;
-    for(int i = 0; i < 50; i++) {
-      for(int j = 0; j < 50; j++) {
+    for(int i = 0; i < 200; i++) {
+      for(int j = 0; j < 200; j++) {
         // image库获取的x、y和Flutter相反，需要把j做为x轴
-        int x = width * j ~/ 50;
-        int y = height * i ~/ 50;
+        int x = width * j ~/ 200;
+        int y = height * i ~/ 200;
         var pixel = imagePic!.getPixel(x, y);
         if(pixel != Colors.white.value) {
-          particleManage.particleList[i * 50 + j].color = Colors.blue;
+          particleManage.particleList[i * 200 + j].color = Colors.blue;
         }
       }
     }

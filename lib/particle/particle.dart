@@ -7,7 +7,8 @@ class Particle {
     this.x = 0,
     this.y = 0,
     this.size = 0,
-    this.color = Colors.red,
+    // this.color = Colors.red,
+    this.color = Colors.white,
   });
 
   // x坐标
