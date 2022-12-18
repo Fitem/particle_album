@@ -7,6 +7,7 @@ import 'package:particle_album/particle/particle.dart';
 ///  Created by Fitem on 2022/12/17
 class ParticleManage extends ChangeNotifier {
   List<Particle> particleList = [];
+  bool isCompleted = false;
 
   /// 设置粒子列表
   void setParticleList(List<Particle> list) {
@@ -20,26 +21,38 @@ class ParticleManage extends ChangeNotifier {
   }
 
   void onUpdate() {
+    bool completed = true;
     for (Particle particle in particleList) {
       updateParticle(particle);
+      completed = completed && isParticleCompleted(particle);
     }
+    isCompleted = completed;
     notifyListeners();
   }
 
   /// 更新粒子位置
   void updateParticle(Particle particle) {
-    if (particle.cx < particle.x) {
-      particle.cx = min(particle.x, particle.cx + 5);
+    if (particle.cx > particle.x) {
+      particle.cx = max(particle.x, particle.cx - particle.ax);
+    } else if (particle.cx < particle.x) {
+      particle.cx = min(particle.x, particle.cx + particle.ax);
     }
-    if (particle.cy < particle.y) {
-      particle.cy = min(particle.y, particle.cy + 5);
+    if (particle.cy > particle.y) {
+      particle.cy = max(particle.y, particle.cy - particle.ay);
+    } else if (particle.cy < particle.y) {
+      particle.cy = min(particle.y, particle.cy + particle.ay);
     }
   }
 
   void reset() {
+    var random = Random();
     for (Particle particle in particleList) {
-      // particle.cx = 0;
-      particle.cy = 0;
+      particle.cx = particle.x - (random.nextDouble() * 200 - 100);
+      particle.cy = particle.y - (random.nextDouble() * 200 - 100);
     }
+  }
+
+  bool isParticleCompleted(Particle particle) {
+    return particle.cx == particle.x && particle.cy == particle.y;
   }
 }

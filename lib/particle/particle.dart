@@ -9,9 +9,11 @@ class Particle {
     this.size = 0,
     // this.color = Colors.red,
     this.color = Colors.white,
-    // this.cx = 0,
+    this.cx = 0,
     this.cy = 0,
-  }): cx = x;
+    this.ax = 0,
+    this.ay = 0,
+  });
 
   // x坐标
   double x;
@@ -27,6 +29,13 @@ class Particle {
 
   // 当前x坐标
   double cx;
+
   // 当前x坐标
   double cy;
+
+  // 加速度ax
+  double ax;
+
+  // 加速度 ay
+  double ay;
 }

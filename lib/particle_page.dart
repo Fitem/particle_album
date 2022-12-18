@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:particle_album/particle/particle.dart';
 import 'package:particle_album/particle/particle_manage.dart';
@@ -16,22 +19,25 @@ class ParticlePage extends StatefulWidget {
 class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixin {
   final ParticleManage particleManage = ParticleManage();
   image.Image? imagePic;
-  late AnimationController _controller;
+  // late AnimationController _controller;
+  late Ticker _ticker;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(duration: const Duration(seconds: 6), vsync: this);
-    _controller.addListener(() {
-      particleManage.onUpdate();
-    });
+    // _controller = AnimationController(duration: const Duration(seconds: 8), vsync: this);
+    // _controller.addListener(() {
+    //   particleManage.onUpdate();
+    // });
+    _ticker = createTicker(_updateTicker);
     initParticleManage();
     initImage();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    // _controller.dispose();
+    _ticker.stop(canceled: true);
     super.dispose();
   }
 
@@ -41,7 +47,8 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
     imagePic = image.decodeImage(bytes)!;
     imageToParticle();
     // particleManage.onUpdate();
-    _controller.forward();
+    // _controller.forward();
+    _ticker.start();
   }
 
   @override
@@ -68,12 +75,19 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
     particleManage.particleList.clear();
     // _manage.addParticle(Particle(x: 200, y: 250, size: 25, color: Colors.red));
     double size = 1;
+    var random = Random();
     for (int i = 0; i < 200; i++) {
       for (int j = 0; j < 200; j++) {
+        double x = size + 2 * size * j;
+        double y = size + 2 * size * i;
         particleManage.addParticle(Particle(
-          x: size + 2 * size * j,
-          y: size + 2 * size * i,
+          x: x,
+          y: y,
+          cx: x - (random.nextDouble() * 200 - 100),
+          cy: y - (random.nextDouble() * 200 - 100),
           size: size,
+          ax: 2 + random.nextDouble() * 10,
+          ay: 2 + random.nextDouble() * 10,
         ));
       }
     }
@@ -132,10 +146,21 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
   }
 
   void _onTap() {
-    if(_controller.isCompleted) {
+    // if(_controller.isCompleted) {
+    //   particleManage.reset();
+    //   _controller.reset();
+    //   _controller.forward();
+    // }
+    if(!_ticker.isTicking) {
       particleManage.reset();
-      _controller.reset();
-      _controller.forward();
+      _ticker.start();
+    }
+  }
+
+  void _updateTicker(Duration elapsed) {
+    particleManage.onUpdate();
+    if(particleManage.isCompleted) {
+      _ticker.stop();
     }
   }
 }
