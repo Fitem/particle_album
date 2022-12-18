@@ -41,16 +41,6 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
     super.dispose();
   }
 
-  Future<void> initImage() async {
-    ByteData data = await rootBundle.load("assets/images/hanzi.png");
-    List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-    imagePic = image.decodeImage(bytes)!;
-    imageToParticle();
-    // particleManage.onUpdate();
-    // _controller.forward();
-    _ticker.start();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,6 +59,16 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
         painter: ParticlePainter(manage: particleManage),
       ),
     );
+  }
+
+  Future<void> initImage() async {
+    ByteData data = await rootBundle.load("assets/images/biaoqing.jpeg");
+    List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    imagePic = image.decodeImage(bytes)!;
+    imageToParticle();
+    // particleManage.onUpdate();
+    // _controller.forward();
+    _ticker.start();
   }
 
   void initParticleManage() {
@@ -138,9 +138,11 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
         int x = width * j ~/ 200;
         int y = height * i ~/ 200;
         var pixel = imagePic!.getPixel(x, y);
-        if(pixel != Colors.white.value) {
-          particleManage.particleList[i * 200 + j].color = Colors.blue;
-        }
+        // if(pixel != Colors.white.value) {
+        //   particleManage.particleList[i * 200 + j].color = Colors.blue;
+        // }
+        var color = Color(pixel);
+        particleManage.particleList[i * 200 + j].color = Color.fromARGB(color.alpha, color.blue, color.green, color.red);
       }
     }
   }
