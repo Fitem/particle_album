@@ -9,9 +9,9 @@ class Particle {
     this.size = 0,
     // this.color = Colors.red,
     this.color = Colors.white,
-    this.cx = 0,
+    // this.cx = 0,
     this.cy = 0,
-  });
+  }): cx = x;
 
   // x坐标
   double x;

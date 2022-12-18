@@ -38,7 +38,7 @@ class ParticleManage extends ChangeNotifier {
 
   void reset() {
     for (Particle particle in particleList) {
-      particle.cx = 0;
+      // particle.cx = 0;
       particle.cy = 0;
     }
   }

@@ -151,8 +151,6 @@ class ParticlePainter extends CustomPainter {
     for (Particle particle in manage.particleList) {
       _drawParticle(canvas, particle);
     }
-    var particle = manage.particleList.last;
-    debugPrint("${particle.cx},${particle.cy}");
   }
 
   @override
