@@ -9,6 +9,8 @@ class Particle {
     this.size = 0,
     // this.color = Colors.red,
     this.color = Colors.white,
+    this.cx = 0,
+    this.cy = 0,
   });
 
   // x坐标
@@ -22,4 +24,9 @@ class Particle {
 
   // 颜色
   Color color;
+
+  // 当前x坐标
+  double cx;
+  // 当前x坐标
+  double cy;
 }

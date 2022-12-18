@@ -13,14 +13,26 @@ class ParticlePage extends StatefulWidget {
   ParticlePageState createState() => ParticlePageState();
 }
 
-class ParticlePageState extends State<ParticlePage> {
+class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixin {
   final ParticleManage particleManage = ParticleManage();
   image.Image? imagePic;
+  late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(duration: const Duration(seconds: 6), vsync: this);
+    _controller.addListener(() {
+      particleManage.onUpdate();
+    });
+    initParticleManage();
     initImage();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<void> initImage() async {
@@ -28,12 +40,12 @@ class ParticlePageState extends State<ParticlePage> {
     List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
     imagePic = image.decodeImage(bytes)!;
     imageToParticle();
-    particleManage.update();
+    // particleManage.onUpdate();
+    _controller.forward();
   }
 
   @override
   Widget build(BuildContext context) {
-    initParticleManage();
     return Scaffold(
       appBar: AppBar(
         title: const Text('粒子相册'),
@@ -43,8 +55,12 @@ class ParticlePageState extends State<ParticlePage> {
   }
 
   Widget _buildBody() {
-    return CustomPaint(
-      painter: ParticlePainter(manage: particleManage),
+    return GestureDetector(
+      onTap: _onTap,
+      child: CustomPaint(
+        size: const Size(200, 200),
+        painter: ParticlePainter(manage: particleManage),
+      ),
     );
   }
 
@@ -114,6 +130,14 @@ class ParticlePageState extends State<ParticlePage> {
       }
     }
   }
+
+  void _onTap() {
+    if(_controller.isCompleted) {
+      particleManage.reset();
+      _controller.reset();
+      _controller.forward();
+    }
+  }
 }
 
 class ParticlePainter extends CustomPainter {
@@ -127,6 +151,8 @@ class ParticlePainter extends CustomPainter {
     for (Particle particle in manage.particleList) {
       _drawParticle(canvas, particle);
     }
+    var particle = manage.particleList.last;
+    debugPrint("${particle.cx},${particle.cy}");
   }
 
   @override
@@ -136,7 +162,7 @@ class ParticlePainter extends CustomPainter {
 
   /// 绘制粒子
   void _drawParticle(Canvas canvas, Particle particle) {
-    canvas.drawCircle(Offset(particle.x, particle.y), particle.size,
+    canvas.drawCircle(Offset(particle.cx, particle.cy), particle.size,
         particlePaint..color = particle.color);
   }
 }

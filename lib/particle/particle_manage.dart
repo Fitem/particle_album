@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:particle_album/particle/particle.dart';
 
@@ -12,12 +14,32 @@ class ParticleManage extends ChangeNotifier {
   }
 
   /// 添加粒子
- void addParticle(Particle particle){
-   particleList.add(particle);
-   notifyListeners();
- }
-
- void update(){
+  void addParticle(Particle particle) {
+    particleList.add(particle);
     notifyListeners();
- }
+  }
+
+  void onUpdate() {
+    for (Particle particle in particleList) {
+      updateParticle(particle);
+    }
+    notifyListeners();
+  }
+
+  /// 更新粒子位置
+  void updateParticle(Particle particle) {
+    if (particle.cx < particle.x) {
+      particle.cx = min(particle.x, particle.cx + 5);
+    }
+    if (particle.cy < particle.y) {
+      particle.cy = min(particle.y, particle.cy + 5);
+    }
+  }
+
+  void reset() {
+    for (Particle particle in particleList) {
+      particle.cx = 0;
+      particle.cy = 0;
+    }
+  }
 }
