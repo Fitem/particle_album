@@ -12,6 +12,7 @@ class ParticleManage extends ChangeNotifier {
   /// 设置粒子列表
   void setParticleList(List<Particle> list) {
     particleList = list;
+    notifyListeners();
   }
 
   /// 添加粒子
@@ -20,6 +21,7 @@ class ParticleManage extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 更新粒子
   void onUpdate() {
     bool completed = true;
     for (Particle particle in particleList) {
@@ -44,6 +46,7 @@ class ParticleManage extends ChangeNotifier {
     }
   }
 
+  /// 重置粒子
   void reset() {
     var random = Random();
     for (Particle particle in particleList) {
@@ -52,6 +55,7 @@ class ParticleManage extends ChangeNotifier {
     }
   }
 
+  /// 粒子是否已移动到指定位置
   bool isParticleCompleted(Particle particle) {
     return particle.cx == particle.x && particle.cy == particle.y;
   }

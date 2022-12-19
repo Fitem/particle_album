@@ -72,7 +72,7 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
   }
 
   void initParticleManage() {
-    particleManage.particleList.clear();
+    List<Particle> list = [];
     // _manage.addParticle(Particle(x: 200, y: 250, size: 25, color: Colors.red));
     double size = 1;
     var random = Random();
@@ -80,7 +80,7 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
       for (int j = 0; j < 200; j++) {
         double x = size + 2 * size * j;
         double y = size + 2 * size * i;
-        particleManage.addParticle(Particle(
+        list.add(Particle(
           x: x,
           y: y,
           cx: x - (random.nextDouble() * 200 - 100),
@@ -91,6 +91,7 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
         ));
       }
     }
+    particleManage.setParticleList(list);
 
     // 回形图形
     // toPaperClip();
