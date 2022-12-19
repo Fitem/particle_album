@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -52,22 +53,39 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
   }
 
   Widget _buildBody() {
-    return GestureDetector(
-      onTap: _onTap,
-      child: CustomPaint(
-        size: const Size(200, 200),
-        painter: ParticlePainter(manage: particleManage),
-      ),
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: _onTap,
+          child: CustomPaint(
+            size: const Size(400, 400),
+            painter: ParticlePainter(manage: particleManage),
+          ),
+        ),
+        const Spacer(),
+        CarouselSlider(
+          options: CarouselOptions(
+            aspectRatio: 2.2,
+            enlargeCenterPage: true,
+            initialPage: 2,
+            autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 6),
+            onPageChanged: _onPageChanged,
+          ),
+          items: imageSliders,
+        )
+      ],
     );
   }
 
-  Future<void> initImage() async {
-    ByteData data = await rootBundle.load("assets/images/biaoqing.jpeg");
+  Future<void> initImage({int index = 0}) async {
+    ByteData data = await rootBundle.load(imgList[index]);
     List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
     imagePic = image.decodeImage(bytes)!;
     imageToParticle();
-    // particleManage.onUpdate();
-    // _controller.forward();
+    if(_ticker.isTicking) {
+      _ticker.stop();
+    }
     _ticker.start();
   }
 
@@ -133,15 +151,16 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
     if(imagePic == null) return;
     int width = imagePic!.width;
     int height = imagePic!.height;
+    double aspect =  width / height;
+    int size = min(width, height);
+    int left = aspect > 1 ? (width - height) ~/ 2 : 0;
+    int top = aspect < 1 ? (height - width) ~/ 2 : 0;
     for(int i = 0; i < 200; i++) {
       for(int j = 0; j < 200; j++) {
         // image库获取的x、y和Flutter相反，需要把j做为x轴
-        int x = width * j ~/ 200;
-        int y = height * i ~/ 200;
+        int x = left + j * size ~/ 200;
+        int y = top + i * size ~/ 200;
         var pixel = imagePic!.getPixel(x, y);
-        // if(pixel != Colors.white.value) {
-        //   particleManage.particleList[i * 200 + j].color = Colors.blue;
-        // }
         var color = Color(pixel);
         particleManage.particleList[i * 200 + j].color = Color.fromARGB(color.alpha, color.blue, color.green, color.red);
       }
@@ -149,11 +168,6 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
   }
 
   void _onTap() {
-    // if(_controller.isCompleted) {
-    //   particleManage.reset();
-    //   _controller.reset();
-    //   _controller.forward();
-    // }
     if(!_ticker.isTicking) {
       particleManage.reset();
       _ticker.start();
@@ -166,6 +180,12 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
     if(particleManage.isCompleted) {
       _ticker.stop();
     }
+  }
+
+  void _onPageChanged(int index, CarouselPageChangedReason reason) {
+    debugPrint("index=$index, ${reason.toString()}");
+    particleManage.reset();
+    initImage(index: index);
   }
 }
 
@@ -193,3 +213,53 @@ class ParticlePainter extends CustomPainter {
         particlePaint..color = particle.color);
   }
 }
+
+final List<String> imgList = [
+  "assets/images/image01.jpg",
+  "assets/images/image02.jpg",
+  "assets/images/image03.jpg",
+  "assets/images/image04.jpg",
+  "assets/images/image05.jpg",
+  "assets/images/image06.jpg",
+  "assets/images/image07.jpg",
+  "assets/images/image08.jpg",
+];
+
+final List<Widget> imageSliders = imgList
+    .map((item) => Container(
+      margin: const EdgeInsets.all(5.0),
+      child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+          child: Stack(
+            children: <Widget>[
+              Image.asset(item, fit: BoxFit.cover, width: 1000.0),
+              Positioned(
+                bottom: 0.0,
+                left: 0.0,
+                right: 0.0,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromARGB(200, 0, 0, 0),
+                        Color.fromARGB(0, 0, 0, 0)
+                      ],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 20.0),
+                  child: Text(
+                    'No. ${imgList.indexOf(item)} image',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )),
+    )).toList();
