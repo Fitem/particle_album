@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:particle_album/particle/particle.dart';
+import 'package:particle_album/01/particle/particle.dart';
 
 ///  Name: 粒子管理器
 ///  Created by Fitem on 2022/12/17

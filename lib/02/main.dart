@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:particle_album/particle_page.dart';
+import 'package:particle_album/02/particle_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized(); // 确定初始化

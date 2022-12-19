@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:particle_album/particle/particle.dart';
-import 'package:particle_album/particle/particle_manage.dart';
 import 'package:image/image.dart' as image;
+import 'package:particle_album/01/particle/particle.dart';
+import 'package:particle_album/01/particle/particle_manage.dart';
 
 ///  Name: ParticlePage
 ///  Created by Fitem on 2022/12/17
