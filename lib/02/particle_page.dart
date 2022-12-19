@@ -20,16 +20,12 @@ class ParticlePage extends StatefulWidget {
 class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixin {
   final ParticleManage particleManage = ParticleManage();
   image.Image? imagePic;
-  // late AnimationController _controller;
   late Ticker _ticker;
+
 
   @override
   void initState() {
     super.initState();
-    // _controller = AnimationController(duration: const Duration(seconds: 8), vsync: this);
-    // _controller.addListener(() {
-    //   particleManage.onUpdate();
-    // });
     _ticker = createTicker(_updateTicker);
     initParticleManage();
     initImage();
@@ -37,7 +33,6 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
 
   @override
   void dispose() {
-    // _controller.dispose();
     _ticker.stop(canceled: true);
     super.dispose();
   }
@@ -90,79 +85,30 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
   }
 
   void initParticleManage() {
-    List<Particle> list = [];
-    // _manage.addParticle(Particle(x: 200, y: 250, size: 25, color: Colors.red));
-    double size = 1;
-    var random = Random();
-    for (int i = 0; i < 200; i++) {
-      for (int j = 0; j < 200; j++) {
-        double x = size + 2 * size * j;
-        double y = size + 2 * size * i;
-        list.add(Particle(
-          x: x,
-          y: y,
-          cx: x - (random.nextDouble() * 200 - 100),
-          cy: y - (random.nextDouble() * 200 - 100),
-          size: size,
-          ax: 2 + random.nextDouble() * 10,
-          ay: 2 + random.nextDouble() * 10,
-        ));
-      }
-    }
-    particleManage.setParticleList(list);
-
-    // 回形图形
-    // toPaperClip();
+    // 初始化粒子
+    particleManage.initParticles();
     // 图片转换成粒子
     imageToParticle();
-  }
-
-  /// 回形图形
-  void toPaperClip() {
-    List<int> scales = [0, 1, 2, 3, 4];
-    for (int i = 0; i < 50; i++) {
-      for (int j = 0; j < 50; j++) {
-        if (((i == 24 - scales[0] * 5 || i == 24 + scales[0] * 5) && j >= 24 - scales[0] * 5 && j <= 24 + scales[0] * 5) ||
-            ((j == 24 - scales[0] * 5 || j == 24 + scales[0] * 5) && i >= 24 - scales[0] * 5 && i <= 24 + scales[0] * 5)) {
-          particleManage.particleList[i * 50 + j].color = Colors.blue;
-        }
-        if (((i == 24 - scales[1] * 5 || i == 24 + scales[1] * 5) && j >= 24 - scales[1] * 5 && j <= 24 + scales[1] * 5) ||
-            ((j == 24 - scales[1] * 5 || j == 24 + scales[1] * 5) && i >= 24 - scales[1] * 5 && i <= 24 + scales[1] * 5)) {
-          particleManage.particleList[i * 50 + j].color = Colors.blue;
-        }
-        if (((i == 24 - scales[2] * 5 || i == 24 + scales[2] * 5) && j >= 24 - scales[2] * 5 && j <= 24 + scales[2] * 5) ||
-            ((j == 24 - scales[2] * 5 || j == 24 + scales[2] * 5) && i >= 24 - scales[2] * 5 && i <= 24 + scales[2] * 5)) {
-          particleManage.particleList[i * 50 + j].color = Colors.blue;
-        }
-        if (((i == 24 - scales[3] * 5 || i == 24 + scales[3] * 5) && j >= 24 - scales[3] * 5 && j <= 24 + scales[3] * 5) ||
-            ((j == 24 - scales[3] * 5 || j == 24 + scales[3] * 5) && i >= 24 - scales[3] * 5 && i <= 24 + scales[3] * 5)) {
-          particleManage.particleList[i * 50 + j].color = Colors.blue;
-        }
-        if (((i == 24 - scales[4] * 5 || i == 24 + scales[4] * 5) && j >= 24 - scales[4] * 5 && j <= 24 + scales[4] * 5) ||
-            ((j == 24 - scales[4] * 5 || j == 24 + scales[4] * 5) && i >= 24 - scales[4] * 5 && i <= 24 + scales[4] * 5)) {
-          particleManage.particleList[i * 50 + j].color = Colors.blue;
-        }
-      }
-    }
   }
 
   /// 图片转换粒子
   void imageToParticle(){
     if(imagePic == null) return;
+    int granularity = particleManage.granularity;
     int width = imagePic!.width;
     int height = imagePic!.height;
     double aspect =  width / height;
     int size = min(width, height);
     int left = aspect > 1 ? (width - height) ~/ 2 : 0;
     int top = aspect < 1 ? (height - width) ~/ 2 : 0;
-    for(int i = 0; i < 200; i++) {
-      for(int j = 0; j < 200; j++) {
+    for(int i = 0; i < granularity; i++) {
+      for(int j = 0; j < granularity; j++) {
         // image库获取的x、y和Flutter相反，需要把j做为x轴
-        int x = left + j * size ~/ 200;
-        int y = top + i * size ~/ 200;
+        int x = left + j * size ~/ granularity;
+        int y = top + i * size ~/ granularity;
         var pixel = imagePic!.getPixel(x, y);
         var color = Color(pixel);
-        particleManage.particleList[i * 200 + j].color = Color.fromARGB(color.alpha, color.blue, color.green, color.red);
+        particleManage.particleList[i * granularity + j].color = Color.fromARGB(color.alpha, color.blue, color.green, color.red);
       }
     }
   }
@@ -209,7 +155,7 @@ class ParticlePainter extends CustomPainter {
 
   /// 绘制粒子
   void _drawParticle(Canvas canvas, Particle particle) {
-    canvas.drawCircle(Offset(particle.cx, particle.cy), particle.size,
+    canvas.drawCircle(Offset(particle.cx, particle.cy), particle.size * 0.5,
         particlePaint..color = particle.color);
   }
 }
