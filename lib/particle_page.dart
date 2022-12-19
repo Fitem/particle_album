@@ -162,6 +162,7 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
 
   void _updateTicker(Duration elapsed) {
     particleManage.onUpdate();
+    // 获取粒子已完成运动，则停止ticker监听
     if(particleManage.isCompleted) {
       _ticker.stop();
     }
