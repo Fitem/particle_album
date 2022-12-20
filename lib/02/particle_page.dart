@@ -21,7 +21,7 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
   final ParticleManage particleManage = ParticleManage();
   image.Image? imagePic;
   late Ticker _ticker;
-
+  int pageIndex = 0;
 
   @override
   void initState() {
@@ -114,10 +114,11 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
   }
 
   void _onTap() {
-    if(!_ticker.isTicking) {
-      particleManage.reset();
-      _ticker.start();
-    }
+    // if(!_ticker.isTicking) {
+    //   particleManage.reset();
+    //   _ticker.start();
+    // }
+    Navigator.pushNamed(context, "/detail", arguments: imgList[pageIndex]);
   }
 
   void _updateTicker(Duration elapsed) {
@@ -129,7 +130,7 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
   }
 
   void _onPageChanged(int index, CarouselPageChangedReason reason) {
-    debugPrint("index=$index, ${reason.toString()}");
+    pageIndex = index;
     particleManage.reset();
     initImage(index: index);
   }
