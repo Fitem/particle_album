@@ -55,7 +55,7 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
     return GestureDetector(
       onTap: _onTap,
       child: CustomPaint(
-        size: const Size(200, 200),
+        size: const Size(400, 400),
         painter: ParticlePainter(manage: particleManage),
       ),
     );
