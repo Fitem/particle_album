@@ -73,6 +73,7 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
     );
   }
 
+  /// 初始化图片
   Future<void> initImage({int index = 0}) async {
     ByteData data = await rootBundle.load(imgList[index]);
     List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
@@ -84,17 +85,18 @@ class ParticlePageState extends State<ParticlePage> with TickerProviderStateMixi
     _ticker.start();
   }
 
+  /// 初始化粒子管理器
   void initParticleManage() {
     // 初始化粒子
     particleManage.initParticles();
     // 图片转换成粒子
-    imageToParticle();
+    // imageToParticle();
   }
 
   /// 图片转换粒子
   void imageToParticle(){
     if(imagePic == null) return;
-    int granularity = particleManage.granularity;
+    int granularity = particleManage.granularity.toInt();
     int width = imagePic!.width;
     int height = imagePic!.height;
     double aspect =  width / height;

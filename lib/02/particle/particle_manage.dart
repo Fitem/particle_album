@@ -8,20 +8,25 @@ import 'package:particle_album/02/particle/particle.dart';
 class ParticleManage extends ChangeNotifier {
   // 粒子集合
   List<Particle> particleList = [];
+
   // 是否完成运动
   bool isCompleted = false;
+
   // 粒子颗粒度
-  int granularity = 200;
+  double granularity = 200.0;
+
   // 粒子移动速度
-  int speed = 3;
+  double speed = 5.0;
+
   // 粒子移动范围
-  int range = 150;
+  double range = 150.0;
+
+  Random random = Random();
 
   /// 初始化粒子
-  void initParticles(){
+  void initParticles() {
     List<Particle> list = [];
     double size = 400 / granularity;
-    var random = Random();
     for (int i = 0; i < granularity; i++) {
       for (int j = 0; j < granularity; j++) {
         double x = size * 0.5 + size * j;
@@ -80,6 +85,33 @@ class ParticleManage extends ChangeNotifier {
   /// 重置粒子
   void reset() {
     var random = Random();
+    for (Particle particle in particleList) {
+      particle.cx = particle.x - (random.nextDouble() * range - range ~/ 2);
+      particle.cy = particle.y - (random.nextDouble() * range - range ~/ 2);
+    }
+  }
+
+  /// 设置粒子颗粒度
+  void setGranularity(double granularity){
+    if(this.granularity == granularity) return;
+    this.granularity = granularity;
+    initParticles();
+  }
+
+  /// 设置粒子移动速度
+  void setSpeed(double speed) {
+    if(this.speed == speed) return;
+    this.speed = speed;
+    for (Particle particle in particleList) {
+      particle.ax = speed + random.nextDouble() * 10;
+      particle.ay = speed + random.nextDouble() * 10;
+    }
+  }
+
+  /// 设置粒子离散距离
+  void setRange(double range){
+    if(this.range == range) return;
+    this.range = range;
     for (Particle particle in particleList) {
       particle.cx = particle.x - (random.nextDouble() * range - range ~/ 2);
       particle.cy = particle.y - (random.nextDouble() * range - range ~/ 2);
