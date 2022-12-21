@@ -13,6 +13,7 @@ class Particle {
     this.cy = 0,
     this.ax = 0,
     this.ay = 0,
+    this.my = 0,
   });
 
   // x坐标
@@ -38,4 +39,7 @@ class Particle {
 
   // 加速度 ay
   double ay;
+
+  // ax移动距离
+  double my;
 }

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:particle_album/02/particle/particle.dart';
 
 ///  Name: 粒子管理器
@@ -83,6 +84,11 @@ class ParticleManage extends ChangeNotifier {
     } else if (particle.cy < particle.y) {
       particle.cy = min(particle.y, particle.cy + particle.ay);
     }
+    if (anim == Anim.printer2 || anim == Anim.particleMotion2) {
+      particle.my += speed;
+      particle.color =
+          particle.color.withAlpha(particle.cy <= particle.my ? 255 : 0);
+    }
   }
 
   /// 重置粒子
@@ -121,7 +127,11 @@ class ParticleManage extends ChangeNotifier {
 
   /// 粒子是否已移动到指定位置
   bool isParticleCompleted(Particle particle) {
-    return particle.cx == particle.x && particle.cy == particle.y;
+    if (particle.my > 0) {
+      return particle.my >= particle.y && particle.cx == particle.x && particle.cy == particle.y;
+    } else {
+      return particle.cx == particle.x && particle.cy == particle.y;
+    }
   }
 
   /// 设置动画
@@ -131,9 +141,10 @@ class ParticleManage extends ChangeNotifier {
 
   /// 设置粒子动画
   void setParticleAnim(Particle particle, Anim anim) {
-    switch(anim) {
+    particle.my = 0;
+    switch (anim) {
       case Anim.printer:
-        particle.cx = particle.x ;
+        particle.cx = particle.x;
         particle.cy = particle.y - 400;
         particle.ax = speed;
         particle.ay = speed + 2;
@@ -151,12 +162,30 @@ class ParticleManage extends ChangeNotifier {
         particle.ax = speed;
         particle.ay = speed;
         break;
+      case Anim.printer2:
+        particle.cx = particle.x;
+        particle.cy = particle.y;
+        particle.ax = speed;
+        particle.ay = speed + 2;
+        break;
+      case Anim.particleMotion2: // 粒子运动2
+        particle.cx = particle.x - (random.nextDouble() * range - range ~/ 2);
+        particle.cy =  - (random.nextDouble() * range - range ~/ 2);
+        particle.ax = speed + random.nextDouble() * 10;
+        particle.ay = speed + random.nextDouble() * 10;
+        break;
     }
+  }
+
+  double calculation(double value) {
+    return sin(value * pi / 50);
   }
 }
 
 enum Anim {
   printer,
+  printer2,
   particleMotion,
+  particleMotion2,
   origin,
 }

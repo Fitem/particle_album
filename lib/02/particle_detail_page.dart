@@ -53,7 +53,7 @@ class ParticleDetailPageState extends State<ParticleDetailPage>
               return [
                 const PopupMenuItem<int>(
                   value: 0,
-                  child: Text("打印机动画"),
+                  child: Text("打印动画"),
                 ),
                 const PopupMenuItem<int>(
                   value: 1,
@@ -62,6 +62,14 @@ class ParticleDetailPageState extends State<ParticleDetailPage>
                 const PopupMenuItem<int>(
                   value: 2,
                   child: Text("原点动画"),
+                ),
+                const PopupMenuItem<int>(
+                  value: 3,
+                  child: Text("打印机2动画"),
+                ),
+                const PopupMenuItem<int>(
+                  value: 4,
+                  child: Text("粒子运动2动画"),
                 ),
               ];
             },
@@ -273,6 +281,14 @@ class ParticleDetailPageState extends State<ParticleDetailPage>
         break;
       case 2: // 原点
         particleManage.setAnim(Anim.origin);
+        _onForward();
+        break;
+      case 3: // 波浪
+        particleManage.setAnim(Anim.printer2);
+        _onForward();
+        break;
+      case 4: // 波浪
+        particleManage.setAnim(Anim.particleMotion2);
         _onForward();
         break;
     }
