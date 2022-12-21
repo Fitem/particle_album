@@ -21,6 +21,9 @@ class ParticleManage extends ChangeNotifier {
   // 粒子移动范围
   double range = 150.0;
 
+  // 粒子动画类型
+  Anim anim = Anim.particleMotion;
+
   Random random = Random();
 
   /// 初始化粒子
@@ -84,23 +87,21 @@ class ParticleManage extends ChangeNotifier {
 
   /// 重置粒子
   void reset() {
-    var random = Random();
     for (Particle particle in particleList) {
-      particle.cx = particle.x - (random.nextDouble() * range - range ~/ 2);
-      particle.cy = particle.y - (random.nextDouble() * range - range ~/ 2);
+      setParticleAnim(particle, anim);
     }
   }
 
   /// 设置粒子颗粒度
-  void setGranularity(double granularity){
-    if(this.granularity == granularity) return;
+  void setGranularity(double granularity) {
+    if (this.granularity == granularity) return;
     this.granularity = granularity;
     initParticles();
   }
 
   /// 设置粒子移动速度
   void setSpeed(double speed) {
-    if(this.speed == speed) return;
+    if (this.speed == speed) return;
     this.speed = speed;
     for (Particle particle in particleList) {
       particle.ax = speed + random.nextDouble() * 10;
@@ -109,8 +110,8 @@ class ParticleManage extends ChangeNotifier {
   }
 
   /// 设置粒子离散距离
-  void setRange(double range){
-    if(this.range == range) return;
+  void setRange(double range) {
+    if (this.range == range) return;
     this.range = range;
     for (Particle particle in particleList) {
       particle.cx = particle.x - (random.nextDouble() * range - range ~/ 2);
@@ -122,4 +123,40 @@ class ParticleManage extends ChangeNotifier {
   bool isParticleCompleted(Particle particle) {
     return particle.cx == particle.x && particle.cy == particle.y;
   }
+
+  /// 设置动画
+  void setAnim(Anim anim) {
+    this.anim = anim;
+  }
+
+  /// 设置粒子动画
+  void setParticleAnim(Particle particle, Anim anim) {
+    switch(anim) {
+      case Anim.printer:
+        particle.cx = particle.x ;
+        particle.cy = particle.y - 400;
+        particle.ax = speed;
+        particle.ay = speed + 2;
+        break;
+      case Anim.particleMotion: // 粒子运动
+        particle.cx = particle.x - (random.nextDouble() * range - range ~/ 2);
+        particle.cy = particle.y - (random.nextDouble() * range - range ~/ 2);
+        particle.ax = speed + random.nextDouble() * 10;
+        particle.ay = speed + random.nextDouble() * 10;
+        break;
+      case Anim.origin:
+        int index = granularity ~/ 2;
+        particle.cx = index * particle.size - particle.size * 0.5;
+        particle.cy = index * particle.size - particle.size * 0.5;
+        particle.ax = speed;
+        particle.ay = speed;
+        break;
+    }
+  }
+}
+
+enum Anim {
+  printer,
+  particleMotion,
+  origin,
 }

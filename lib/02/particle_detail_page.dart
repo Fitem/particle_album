@@ -45,6 +45,29 @@ class ParticleDetailPageState extends State<ParticleDetailPage>
     return Scaffold(
       appBar: AppBar(
         title: const Text('粒子详情'),
+        actions: [
+          PopupMenuButton(
+            // add icon, by default "3 dot" icon
+            // icon: Icon(Icons.book)
+            itemBuilder: (context) {
+              return [
+                const PopupMenuItem<int>(
+                  value: 0,
+                  child: Text("打印机动画"),
+                ),
+                const PopupMenuItem<int>(
+                  value: 1,
+                  child: Text("粒子运动动画"),
+                ),
+                const PopupMenuItem<int>(
+                  value: 2,
+                  child: Text("原点动画"),
+                ),
+              ];
+            },
+            onSelected: _onAnimChanged,
+          )
+        ],
       ),
       body: _buildBody(),
     );
@@ -54,7 +77,7 @@ class ParticleDetailPageState extends State<ParticleDetailPage>
     return Column(
       children: [
         GestureDetector(
-          onTap: _onTap,
+          onTap: _onForward,
           child: CustomPaint(
             size: const Size(400, 400),
             painter: ParticlePainter(manage: particleManage),
@@ -185,7 +208,7 @@ class ParticleDetailPageState extends State<ParticleDetailPage>
     _ticker.start();
   }
 
-  void _onTap() {
+  void _onForward() {
     if (_ticker.isTicking) {
       _ticker.stop();
     }
@@ -228,11 +251,29 @@ class ParticleDetailPageState extends State<ParticleDetailPage>
         break;
       case SliderType.speed:
         particleManage.setSpeed(value);
-        _onTap();
+        _onForward();
         break;
       case SliderType.range:
         particleManage.setRange(value);
-        _onTap();
+        _onForward();
+        break;
+    }
+  }
+
+  /// 粒子动画切换
+  void _onAnimChanged(value) {
+    switch (value) {
+      case 0: // 打印机
+        particleManage.setAnim(Anim.printer);
+        _onForward();
+        break;
+      case 1: // 粒子运动
+        particleManage.setAnim(Anim.particleMotion);
+        _onForward();
+        break;
+      case 2: // 原点
+        particleManage.setAnim(Anim.origin);
+        _onForward();
         break;
     }
   }
