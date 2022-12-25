@@ -7,13 +7,11 @@ class Particle {
     this.x = 0,
     this.y = 0,
     this.size = 0,
-    // this.color = Colors.red,
     this.color = Colors.white,
     this.cx = 0,
     this.cy = 0,
     this.ax = 0,
     this.ay = 0,
-    this.my = 0,
   });
 
   // x坐标
@@ -39,7 +37,4 @@ class Particle {
 
   // 加速度 ay
   double ay;
-
-  // ax移动距离
-  double my;
 }

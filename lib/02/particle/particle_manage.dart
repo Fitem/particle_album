@@ -22,6 +22,9 @@ class ParticleManage extends ChangeNotifier {
   // 粒子移动范围
   double range = 150.0;
 
+  // 粒子动画执行距离
+  double my = 0;
+
   // 粒子动画类型
   Anim anim = Anim.particleMotion;
 
@@ -64,6 +67,10 @@ class ParticleManage extends ChangeNotifier {
   /// 更新粒子
   void onUpdate() {
     bool completed = true;
+    if(anim == Anim.printer2 || anim == Anim.particleMotion2) {
+      my += speed;
+    }
+
     for (Particle particle in particleList) {
       updateParticle(particle);
       completed = completed && isParticleCompleted(particle);
@@ -79,15 +86,28 @@ class ParticleManage extends ChangeNotifier {
     } else if (particle.cx < particle.x) {
       particle.cx = min(particle.x, particle.cx + particle.ax);
     }
-    if (particle.cy > particle.y) {
-      particle.cy = max(particle.y, particle.cy - particle.ay);
-    } else if (particle.cy < particle.y) {
-      particle.cy = min(particle.y, particle.cy + particle.ay);
-    }
-    if (anim == Anim.printer2 || anim == Anim.particleMotion2) {
-      particle.my += speed;
+
+    if (anim == Anim.particleMotion2) {
       particle.color =
-          particle.color.withAlpha(particle.cy <= particle.my ? 255 : 0);
+          particle.color.withAlpha(particle.cy <= my ? 255 : 0);
+
+      if (particle.cy - my < 10) {
+        if (particle.cy > particle.y) {
+          particle.cy = max(particle.y, particle.cy - particle.ay);
+        } else if (particle.cy < particle.y) {
+          particle.cy = min(particle.y, particle.cy + particle.ay);
+        }
+      }
+    } else {
+      if (particle.cy > particle.y) {
+        particle.cy = max(particle.y, particle.cy - particle.ay);
+      } else if (particle.cy < particle.y) {
+        particle.cy = min(particle.y, particle.cy + particle.ay);
+      }
+      if (anim == Anim.printer2) {
+        particle.color =
+            particle.color.withAlpha(particle.cy <= my ? 255 : 0);
+      }
     }
   }
 
@@ -127,8 +147,10 @@ class ParticleManage extends ChangeNotifier {
 
   /// 粒子是否已移动到指定位置
   bool isParticleCompleted(Particle particle) {
-    if (particle.my > 0) {
-      return particle.my >= particle.y && particle.cx == particle.x && particle.cy == particle.y;
+    if (my > 0) {
+      return my >= particle.y &&
+          particle.cx == particle.x &&
+          particle.cy == particle.y;
     } else {
       return particle.cx == particle.x && particle.cy == particle.y;
     }
@@ -141,7 +163,7 @@ class ParticleManage extends ChangeNotifier {
 
   /// 设置粒子动画
   void setParticleAnim(Particle particle, Anim anim) {
-    particle.my = 0;
+    my = 0;
     switch (anim) {
       case Anim.printer:
         particle.cx = particle.x;
@@ -170,9 +192,10 @@ class ParticleManage extends ChangeNotifier {
         break;
       case Anim.particleMotion2: // 粒子运动2
         particle.cx = particle.x - (random.nextDouble() * range - range ~/ 2);
-        particle.cy =  - (random.nextDouble() * range - range ~/ 2);
+        particle.cy = particle.y + 100;
         particle.ax = speed + random.nextDouble() * 10;
-        particle.ay = speed + random.nextDouble() * 10;
+        particle.ay = speed + random.nextDouble() * 5;
+        my = 50;
         break;
     }
   }

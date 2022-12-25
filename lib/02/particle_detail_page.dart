@@ -283,11 +283,11 @@ class ParticleDetailPageState extends State<ParticleDetailPage>
         particleManage.setAnim(Anim.origin);
         _onForward();
         break;
-      case 3: // 波浪
+      case 3: // 打印机2
         particleManage.setAnim(Anim.printer2);
         _onForward();
         break;
-      case 4: // 波浪
+      case 4: // 粒子运动2
         particleManage.setAnim(Anim.particleMotion2);
         _onForward();
         break;
